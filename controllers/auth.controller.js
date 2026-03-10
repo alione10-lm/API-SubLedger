@@ -1,5 +1,6 @@
 import User from "../models/user.schema.js";
-import { hashPassword } from "../utils/hashPassowrd.js";
+import { comparePassword, hashPassword } from "../utils/hashPassowrd.js";
+import { generateToken } from "../utils/jwtUtil.js";
 
 export const registerUser = async (req, res) => {
     try {
@@ -24,5 +25,35 @@ export const registerUser = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            res.status(400).json({
+                message: "invalid email  , no user found with this email !",
+            });
+        }
+
+        const isMatch = comparePassword(password, user.password);
+
+        if (!isMatch) {
+            res.status(400).json({
+                message: "password incorrect !",
+            });
+        }
+
+        const token = generateToken({ userId: user._id, role: user.role });
+
+        res.status(200).json({ message: "logged in ", token });
+    } catch (error) {
+        console.log(error.message);
+
+        res.status(500).json("something went wrong , try again later !");
     }
 };
