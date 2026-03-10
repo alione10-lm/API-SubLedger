@@ -1,6 +1,8 @@
 import express from "express";
 import connectDB from "./config/db.js";
 
+import authRoutes from "./rotues/auth.router.js";
+
 import dotenv from "dotenv";
 import { login, registerUser } from "./controllers/auth.controller.js";
 dotenv.config();
@@ -15,8 +17,7 @@ app.get("/", (req, res) => {
     res.json({ message: "done" });
 });
 
-app.post("/api/auth/register", registerUser);
-app.post("/api/auth/login", login);
+app.use("/api", authRoutes);
 
 app.listen(5000, () => {
     console.log("server runnig on ", process.env.PORT);
