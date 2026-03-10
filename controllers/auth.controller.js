@@ -40,8 +40,7 @@ export const login = async (req, res) => {
             });
         }
 
-        const isMatch = comparePassword(password, user.password);
-
+        const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
             res.status(400).json({
                 message: "password incorrect !",
