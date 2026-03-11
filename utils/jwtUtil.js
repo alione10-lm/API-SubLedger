@@ -7,10 +7,7 @@ const generateToken = (payload) => {
     return jwt.sign(payload, process.env.JWT_SECRET_KEY);
 };
 const verfiryToken = (token) => {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log(decode);
-
-    return decoded;
+    return jwt.verify(token, process.env.JWT_SECRET_KEY);
 };
 
 export { generateToken, verfiryToken };

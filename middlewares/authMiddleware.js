@@ -11,7 +11,6 @@ export const authMiddleware = async (req, res, next) => {
 
     try {
         const decoded = verfiryToken(token);
-        console.log(decoded);
 
         req.user = decoded;
 
@@ -21,7 +20,7 @@ export const authMiddleware = async (req, res, next) => {
     }
 };
 
-export const protectedRoutes = async (req, res, next) => {
+export const protectedRoutes = (req, res, next) => {
     {
         try {
             const { role } = req.user;
