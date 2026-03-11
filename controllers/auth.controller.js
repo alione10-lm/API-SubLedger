@@ -54,3 +54,15 @@ export const login = async (req, res) => {
         res.status(500).json("something went wrong , try again later !");
     }
 };
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({
+            _id: { $ne: req.user.userId },
+        }).select("-password");
+
+        res.status(200).json({ users });
+    } catch (error) {
+        res.status(400).json({ message: "failed to get all users" });
+    }
+};

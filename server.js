@@ -1,14 +1,16 @@
 import express from "express";
 import connectDB from "./config/db.js";
 
-import authRoutes from "./rotues/auth.router.js";
+import authRoutes from "./rotues/auth.route.js";
+import subscriptionRoutes from "./rotues/subscription.route.js";
 
 import dotenv from "dotenv";
-import { login, registerUser } from "./controllers/auth.controller.js";
+
 import {
     authMiddleware,
     protectedRoutes,
 } from "./middlewares/authMiddleware.js";
+
 dotenv.config();
 
 const app = express();
@@ -21,11 +23,8 @@ app.get("/", (req, res) => {
     res.json({ message: "done" });
 });
 
-app.use("/api", authRoutes);
-
-app.use("/", authMiddleware, protectedRoutes, (req, res) => {
-    res.json({ user: req.user });
-});
+app.use("/api/auth", authRoutes);
+app.use("/api/subs", authMiddleware, subscriptionRoutes);
 
 app.listen(5000, () => {
     console.log("server runnig on ", process.env.PORT);
