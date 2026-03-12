@@ -1,10 +1,8 @@
-import { body } from "express-validator";
-import { validationResult } from "express-validator";
+import { validationResult, body } from "express-validator";
 
 export const validateRequest = (req, res, next) => {
     const errors = validationResult(req);
 
-    console.log(errors);
     if (!errors.isEmpty()) {
         return res
             .status(400)

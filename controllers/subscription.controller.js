@@ -1,9 +1,9 @@
-import subscriptionSchema from "../models/subscription.schema.js";
+import Subscription from "../models/subscription.schema.js";
 
 export const createSubscription = async (req, res) => {
     const { userId } = req.user;
     try {
-        const subs = await subscriptionSchema.create({ ...req.body, userId });
+        const subs = await Subscription.create({ ...req.body, userId });
         res.status(201).json({ status: "success", data: subs });
     } catch (err) {
         res.status(500).json({
@@ -15,8 +15,10 @@ export const createSubscription = async (req, res) => {
 
 export const getAllSubscriptions = async (req, res) => {
     try {
-        const subscriptions = await subscriptionSchema.find({
-            userId: req.user.usreId,
+        const { userId } = req.user;
+
+        const subscriptions = await Subscription.find({
+            userId,
         });
         res.status(200).json({
             status: "success",
@@ -24,75 +26,84 @@ export const getAllSubscriptions = async (req, res) => {
             data: subscriptions,
         });
     } catch (err) {
-        res.status(500).json({ status: "error", message: "Erreur serveur" });
+        res.status(500).json({
+            status: "error",
+            message: "internal server error" + err.message,
+        });
     }
 };
 
 export const getSubscriptionById = async (req, res) => {
     try {
-        const subscription = await subscriptionSchema.findOne({
+        const subscription = await Subscription.findOne({
             _id: req.params.id,
-            userId: req.user.usreId,
+            userId: req.user.userId,
         });
 
         if (!subscription) {
             return res.status(404).json({
                 status: "error",
-                message: "Abonnement non trouvé ou accès non autorisé",
+                message: "subscription not found ",
             });
         }
 
         res.status(200).json({ status: "success", data: subscription });
     } catch (err) {
-        res.status(500).json({ status: "error", message: "Erreur serveur" });
+        res.status(500).json({
+            status: "error",
+            message: "internal server error",
+        });
     }
 };
 
 export const updateSubscription = async (req, res) => {
     try {
-        const { error } = subscriptionSchema.validate(req.body);
-        if (error) {
-            return res
-                .status(400)
-                .json({ status: "error", message: error.details[0].message });
-        }
-
-        const subscription = await subscriptionSchema.findOneAndUpdate(
+        const subscription = await Subscription.findOneAndUpdate(
             { _id: req.params.id, userId: req.user.userId },
             req.body,
-            { new: true, runValidators: true },
+            { new: true },
         );
 
         if (!subscription) {
             return res
                 .status(404)
-                .json({ status: "error", message: "Abonnement non trouvé" });
+                .json({ status: "error", message: "subscription  not found " });
         }
 
-        res.status(200).json({ status: "success", data: subscription });
+        res.status(200).json({
+            status: "success",
+            message: "subscription updated successfully",
+            data: subscription,
+        });
     } catch (err) {
-        res.status(500).json({ status: "error", message: "Erreur serveur" });
+        res.status(500).json({
+            status: "error",
+            message: "internal server error",
+        });
     }
 };
 
 export const deleteSubscription = async (req, res) => {
     try {
-        const subscription = await subscriptionSchema.findOneAndDelete({
-            _id: req.params.userId,
-            userId: req.user.id,
+        const subscription = await Subscription.findOneAndDelete({
+            _id: req.params.id,
+            userId: req.user.userId,
         });
 
         if (!subscription) {
             return res
                 .status(404)
-                .json({ status: "error", message: "Abonnement non trouvé" });
+                .json({ status: "error", message: "susbcription not found " });
         }
 
-        res.status(200).json({
+        res.status(204).json({
             status: "success",
-            message: "Abonnement supprimé avec succès",
+            message: "subscription  deleted successfully",
         });
     } catch (err) {
-        res.status(500).json({ status: "error", message: "Erreur serveur" });
+        res.status(500).json({
+            status: "error",
+            message: "internal server error",
+        });
     }
 };
