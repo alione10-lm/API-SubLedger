@@ -1,3 +1,4 @@
+import subscriptionSchema from "../models/subscription.schema.js";
 import User from "../models/user.schema.js";
 import { comparePassword, hashPassword } from "../utils/hashPassowrd.js";
 import { generateToken } from "../utils/jwtUtil.js";
@@ -64,5 +65,25 @@ export const getAllUsers = async (req, res) => {
         res.status(200).json({ users });
     } catch (error) {
         res.status(500).json({ message: "failed to get all users" });
+    }
+};
+
+export const getProfileDetails = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const user = await User.findOne({ _id: userId });
+
+        if (!user) {
+            return res.status(404).json({ message: "user not found " });
+        }
+
+        const userSubs = await subscriptionSchema.find({ userId });
+
+        res.status(200).json({ user, userSubs });
+    } catch (error) {
+        res.status(500).json({
+            message: "internal server error ",
+            error: error.message,
+        });
     }
 };

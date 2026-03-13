@@ -3,6 +3,7 @@ import {
     login,
     registerUser,
     getAllUsers,
+    getProfileDetails,
 } from "../controllers/auth.controller.js";
 import {
     loginValidator,
@@ -19,6 +20,7 @@ const router = Router();
 router
     .post("/register", registerValidator, validateRequest, registerUser)
     .post("/login", loginValidator, validateRequest, login)
-    .get("/users", authMiddleware, protectedRoutes, getAllUsers);
+    .get("/users", authMiddleware, protectedRoutes, getAllUsers)
+    .get("/profile", authMiddleware, getProfileDetails);
 
 export default router;

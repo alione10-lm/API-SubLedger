@@ -26,6 +26,10 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/subs", authMiddleware, subscriptionRoutes);
 
+app.use((req, res) => {
+    res.status(404).json({ message: "route not found" });
+});
+
 app.listen(5000, () => {
     console.log("server runnig on ", process.env.PORT);
 });
